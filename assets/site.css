@@ -108,6 +108,7 @@ h3{font-family:var(--font-body);font-weight:600;font-size:19px;line-height:1.3}
 .wa-float:hover{transform:translateY(-2px)}
 .wa-float svg{width:22px;height:22px}
 @media (max-width:480px){.wa-float span{display:none}.wa-float{padding:13px}}
+.ext{display:block;font-style:normal;font-size:.82em;color:#1f7a4d;margin-top:2px}
 
 /* Tool pages (calculators): layout is a form column and a sticky results column; results are the point, so they get the card. */
 .tool-hero{background:var(--navy);color:var(--on-navy);padding-block:56px 48px;position:relative;overflow:hidden;isolation:isolate}

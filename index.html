@@ -290,6 +290,7 @@ tbody tr.now td{background:var(--teal-soft)}
 .wa-float:hover{transform:translateY(-2px)}
 .wa-float svg{width:22px;height:22px}
 @media (max-width:480px){.wa-float span{display:none}.wa-float{padding:13px}}
+.ext{display:block;font-style:normal;font-size:.82em;color:#1f7a4d;margin-top:2px}
 
 /* Tool pages (calculators): layout is a form column and a sticky results column; results are the point, so they get the card. */
 .tool-hero{background:var(--navy);color:var(--on-navy);padding-block:56px 48px;position:relative;overflow:hidden;isolation:isolate}
@@ -477,9 +478,10 @@ tbody tr.now td{background:var(--teal-soft)}
           <li class="later"><span class="d">13 Nov</span><span class="t">IFF<span class="s">QRMP taxpayers, optional</span></span><span class="st">Upcoming</span></li>
           <li class="later"><span class="d">15 Nov</span><span class="t">PF and ESI contributions<span class="s">for October</span></span><span class="st">Upcoming</span></li>
           <li class="later"><span class="d">20 Nov</span><span class="t">GSTR-3B<span class="s">monthly filers, October</span></span><span class="st">Upcoming</span></li>
-          <li class="later"><span class="d">28 Nov</span><span class="t">MGT-7 annual return<span class="s">companies, 60 days from AGM</span></span><span class="st">Upcoming</span></li>
+          <li class="later"><span class="d">21 Nov</span><span class="t">ITR, audit cases<span class="s">AY 2026-27, extended by CBDT</span></span><span class="st">Upcoming</span></li>
+          <li class="later"><span class="d">30 Nov</span><span class="t">ITR, transfer pricing cases<span class="s">section 92E</span></span><span class="st">Upcoming</span></li>
         </ol>
-        <p class="cal-note">Standard due dates. We track the ones that apply to you and ask for data five days ahead. Extensions notified by CBDT or CBIC may change these.</p>
+        <p class="cal-note">Standard due dates. We track the ones that apply to you and ask for data five days ahead. Extensions already notified are shown. New extensions may change these.</p>
       </aside>
     </div>
   </section>
@@ -609,19 +611,19 @@ tbody tr.now td{background:var(--teal-soft)}
             <tr data-m="3"><td class="m">April</td><td><ul><li><span class="d">30</span> TDS deposit for March</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Jan–Mar)</li><li><span class="d">22/24</span> GSTR-3B for QRMP filers</li></ul></td><td></td></tr>
             <tr data-m="4"><td class="m">May</td><td><ul><li><span class="d">31</span> TDS returns, Q4 (24Q, 26Q, 27Q)</li></ul></td><td></td><td><ul><li><span class="d">30</span> LLP Form 11, annual return</li></ul></td></tr>
             <tr data-m="5"><td class="m">June</td><td><ul><li><span class="d">15</span> Advance tax, 1st instalment (15%)</li><li><span class="d">15</span> Form 16 to employees</li></ul></td><td></td><td><ul><li><span class="d">30</span> DPT-3, return of deposits (companies)</li></ul></td></tr>
-            <tr data-m="6"><td class="m">July</td><td><ul><li><span class="d">31</span> ITR, non-audit cases</li><li><span class="d">31</span> TDS returns, Q1</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Apr–Jun)</li></ul></td><td></td></tr>
-            <tr data-m="7"><td class="m">August</td><td></td><td></td><td></td></tr>
-            <tr data-m="8"><td class="m">September</td><td><ul><li><span class="d">15</span> Advance tax, 2nd instalment (45%)</li><li><span class="d">30</span> Tax audit report (3CA/3CB-3CD)</li></ul></td><td></td><td><ul><li><span class="d">30</span> AGM, companies</li><li><span class="d">30</span> DIR-3 KYC, all directors</li></ul></td></tr>
-            <tr data-m="9"><td class="m">October</td><td><ul><li><span class="d">31</span> ITR, audit cases</li><li><span class="d">31</span> TDS returns, Q2</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Jul–Sep)</li></ul></td><td><ul><li><span class="d">15</span> ADT-1, auditor appointment</li><li><span class="d">29</span> AOC-4, financial statements</li><li><span class="d">30</span> LLP Form 8, statement of accounts</li></ul></td></tr>
-            <tr data-m="10"><td class="m">November</td><td></td><td></td><td><ul><li><span class="d">28</span> MGT-7, annual return</li></ul></td></tr>
-            <tr data-m="11"><td class="m">December</td><td><ul><li><span class="d">15</span> Advance tax, 3rd instalment (75%)</li><li><span class="d">31</span> Belated or revised ITR, last date</li></ul></td><td><ul><li><span class="d">31</span> GSTR-9 and 9C, annual return</li></ul></td><td></td></tr>
+            <tr data-m="6"><td class="m">July</td><td><ul><li><span class="d">31</span> ITR-1 and ITR-2</li><li><span class="d">31</span> TDS returns, Q1</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Apr–Jun)</li></ul></td><td></td></tr>
+            <tr data-m="7"><td class="m">August</td><td><ul><li><span class="d">31</span> ITR-3 and ITR-4, non-audit cases</li></ul></td><td></td><td></td></tr>
+            <tr data-m="8"><td class="m">September</td><td><ul><li><span class="d">15</span> Advance tax, 2nd instalment (45%)</li><li><span class="d">30</span> Tax audit report (3CA/3CB-3CD) <em class="ext">AY 2026-27: extended to 21 Oct</em></li></ul></td><td></td><td><ul><li><span class="d">30</span> AGM, companies</li><li><span class="d">30</span> DIR-3 KYC, all directors</li></ul></td></tr>
+            <tr data-m="9"><td class="m">October</td><td><ul><li><span class="d">31</span> ITR, audit cases <em class="ext">AY 2026-27: extended to 21 Nov</em></li><li><span class="d">31</span> TDS returns, Q2</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Jul–Sep)</li></ul></td><td><ul><li><span class="d">15</span> ADT-1, auditor appointment</li><li><span class="d">29</span> AOC-4, financial statements <em class="ext">FY 2025-26: no additional fee till 31 Dec</em></li><li><span class="d">30</span> LLP Form 8, statement of accounts</li></ul></td></tr>
+            <tr data-m="10"><td class="m">November</td><td><ul><li><span class="d">30</span> ITR, transfer pricing cases (92E)</li></ul></td><td></td><td><ul><li><span class="d">28</span> MGT-7, annual return <em class="ext">FY 2025-26: no additional fee till 31 Jan 2027</em></li></ul></td></tr>
+            <tr data-m="11"><td class="m">December</td><td><ul><li><span class="d">15</span> Advance tax, 3rd instalment (75%)</li><li><span class="d">31</span> Belated ITR, last date</li></ul></td><td><ul><li><span class="d">31</span> GSTR-9 and 9C, annual return</li></ul></td><td></td></tr>
             <tr data-m="0"><td class="m">January</td><td><ul><li><span class="d">31</span> TDS returns, Q3</li></ul></td><td><ul><li><span class="d">13</span> GSTR-1 for QRMP filers (Oct–Dec)</li></ul></td><td></td></tr>
             <tr data-m="1"><td class="m">February</td><td></td><td></td><td></td></tr>
-            <tr data-m="2"><td class="m">March</td><td><ul><li><span class="d">15</span> Advance tax, 4th instalment (100%)</li><li><span class="d">31</span> Financial year ends</li></ul></td><td><ul><li><span class="d">31</span> LUT for exports, next financial year</li></ul></td><td></td></tr>
+            <tr data-m="2"><td class="m">March</td><td><ul><li><span class="d">15</span> Advance tax, 4th instalment (100%)</li><li><span class="d">31</span> Revised ITR, last date</li><li><span class="d">31</span> Financial year ends</li></ul></td><td><ul><li><span class="d">31</span> LUT for exports, next financial year</li></ul></td><td></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="table-note">AOC-4 and MGT-7 dates assume an AGM on 30 September. Extensions notified by CBDT, CBIC or MCA may change any of these. Your own calendar, with only the dates that apply to you, is the first thing we build when you join.</p>
+      <p class="table-note">AOC-4 and MGT-7 dates assume an AGM on 30 September. Extensions already notified for this year are shown in green. New extensions by CBDT, CBIC or MCA may change any of these. Your own calendar, with only the dates that apply to you, is the first thing we build when you join.</p>
     </div>
   </section>
 
@@ -848,16 +850,27 @@ tbody tr.now td{background:var(--teal-soft)}
   if(m===0||m===3||m===6||m===9){items[2]={d:13,t:'GSTR-1, QRMP filers',s:'for the quarter just ended'};items.push({d:22,t:'GSTR-3B, QRMP filers',s:'22nd or 24th by state'});}
   var extra={
     0:[{d:31,t:'TDS returns, Q3',s:'24Q, 26Q, 27Q'}],
-    2:[{d:15,t:'Advance tax, 4th instalment',s:'100% of estimated tax'},{d:31,t:'Financial year ends',s:'closing entries, LUT for exports'}],
+    2:[{d:15,t:'Advance tax, 4th instalment',s:'100% of estimated tax'},{d:31,t:'Revised ITR',s:'last date'},{d:31,t:'Financial year ends',s:'closing entries, LUT for exports'}],
     4:[{d:30,t:'LLP Form 11',s:'annual return'},{d:31,t:'TDS returns, Q4',s:'24Q, 26Q, 27Q'}],
     5:[{d:15,t:'Advance tax, 1st instalment',s:'15% of estimated tax'},{d:15,t:'Form 16 to employees',s:'for the previous year'},{d:30,t:'DPT-3',s:'companies, return of deposits'}],
-    6:[{d:31,t:'ITR, non-audit cases',s:'individuals, firms, LLPs'},{d:31,t:'TDS returns, Q1',s:'24Q, 26Q, 27Q'}],
+    6:[{d:31,t:'ITR-1 and ITR-2',s:'salary, house property, capital gains'},{d:31,t:'TDS returns, Q1',s:'24Q, 26Q, 27Q'}],
+    7:[{d:31,t:'ITR-3 and ITR-4',s:'business income, non-audit cases'}],
     8:[{d:15,t:'Advance tax, 2nd instalment',s:'45% of estimated tax'},{d:30,t:'Tax audit report, AGM and DIR-3 KYC',s:'3CA/3CB-3CD, companies, directors'}],
     9:[{d:15,t:'ADT-1',s:'auditor appointment'},{d:29,t:'AOC-4',s:'financial statements'},{d:30,t:'LLP Form 8',s:'statement of accounts'},{d:31,t:'ITR, audit cases and TDS returns, Q2',s:'companies, audited firms'}],
-    10:[{d:28,t:'MGT-7 annual return',s:'companies, 60 days from AGM'}],
-    11:[{d:15,t:'Advance tax, 3rd instalment',s:'75% of estimated tax'},{d:31,t:'GSTR-9 and 9C',s:'annual return and reconciliation'},{d:31,t:'Belated or revised ITR',s:'last date'}]
+    10:[{d:28,t:'MGT-7 annual return',s:'companies, 60 days from AGM'},{d:30,t:'ITR, transfer pricing cases',s:'section 92E'}],
+    11:[{d:15,t:'Advance tax, 3rd instalment',s:'75% of estimated tax'},{d:31,t:'GSTR-9 and 9C',s:'annual return and reconciliation'},{d:31,t:'Belated ITR',s:'last date'}]
   };
   if(extra[m]){items=items.concat(extra[m]);}
+  // Extensions notified for a specific year: 'year-monthIndex' -> replace items by title, or add
+  var EXT={
+    '2026-8':{drop:['Tax audit report, AGM and DIR-3 KYC'],add:[{d:30,t:'AGM and DIR-3 KYC',s:'companies, directors (tax audit report extended to 21 Oct)'}]},
+    '2026-9':{drop:['AOC-4','ITR, audit cases and TDS returns, Q2'],add:[{d:21,t:'Tax audit report (extended)',s:'AY 2026-27, CBDT extension'},{d:31,t:'TDS returns, Q2',s:'24Q, 26Q, 27Q'}]},
+    '2026-10':{drop:['MGT-7 annual return'],add:[{d:21,t:'ITR, audit cases (extended)',s:'AY 2026-27, CBDT extension'}]},
+    '2026-11':{add:[{d:31,t:'AOC-4 (no additional fee)',s:'FY 2025-26, MCA extension'}]},
+    '2027-0':{add:[{d:31,t:'MGT-7 / MGT-7A (no additional fee)',s:'FY 2025-26, MCA extension'}]}
+  };
+  var ex=EXT[y+'-'+m];
+  if(ex){if(ex.drop){items=items.filter(function(it){return ex.drop.indexOf(it.t)<0;});}if(ex.add){items=items.concat(ex.add);}}
   items.sort(function(a,b){return a.d-b.d;});
   var list=document.getElementById('calList');
   document.getElementById('calMonth').textContent=MONTHS[m]+' '+y;
