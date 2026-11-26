@@ -1,0 +1,13 @@
+{
+  "name": "Jinovate OS",
+  "short_name": "Jinovate OS",
+  "start_url": "/ops/",
+  "scope": "/ops/",
+  "display": "standalone",
+  "background_color": "#0D2A5E",
+  "theme_color": "#0D2A5E",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

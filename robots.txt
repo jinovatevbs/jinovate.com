@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /ops/
 Sitemap: https://www.jinovate.com/sitemap.xml
