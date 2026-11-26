@@ -1,6 +1,6 @@
 /* Jinovate OS service worker: app shell works offline, always tries network first so updates land at once. API calls (script.google.com) are never cached. */
-var C = 'jos-v4';
-var SHELL = ['./', 'index.html', 'app.css?v=4', 'app.js?v=4', 'icon-192.png', 'manifest.webmanifest'];
+var C = 'jos-v4b';
+var SHELL = ['./', 'index.html', 'app.css?v=5', 'app.js?v=5', 'icon-192.png', 'manifest.webmanifest'];
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(C).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); })); });
 self.addEventListener('activate', function (e) { e.waitUntil(caches.keys().then(function (k) { return Promise.all(k.filter(function (x) { return x !== C; }).map(function (x) { return caches.delete(x); })); }).then(function () { return self.clients.claim(); })); });
 self.addEventListener('fetch', function (e) {

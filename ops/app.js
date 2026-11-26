@@ -1,6 +1,6 @@
 /* Jinovate OS – PIN app (www.jinovate.com/ops). Backend: Apps Script doPost (same sheets as before). */
 'use strict';
-var API_URL = '__API_URL__';
+var API_URL = 'https://script.google.com/macros/s/AKfycbzNxqOZgLVxV7G-JLe8-6pVqsdHQKFVRu15lWVi0vH6nUCFDJXbpXsvUnrFX2-AwuB9dA/exec';
 var LS = { tok: 'jos_tok', email: 'jos_email', boot: 'jos_boot', ib: 'jos_ib_no' };
 
 /* ---------------- state ---------------- */
@@ -91,6 +91,7 @@ function render() {
   else if (V.tab === 'eod') h = eodScreen();
   else if (V.tab === 'score') h = scoreScreen();
   else if (V.tab === 'rec') h = recScreen();
+  else if (V.tab === 'dir') h = directorScreen();
   else if (V.tab === 'bill' && isAdmin()) h = billScreen();
   else h = todayScreen();
   if (!V.scr) h += navHtml();
@@ -123,7 +124,7 @@ function navHtml() {
 
 function menuHtml() {
   return '<div class="menu" data-a="menubg"><div class="mp"><div class="who"><p style="margin:0;font-size:19px;font-weight:800">' + esc(me()) + '</p><p class="rs">' + (isAdmin() ? 'Admin' : 'Team') + '</p></div>' +
-    (isAdmin() ? '<button class="item" data-a="tab" data-v="eod">📝 EOD</button>' : '') +
+    (isAdmin() ? '<button class="item" data-a="tab" data-v="dir">👔 Director view</button><button class="item" data-a="tab" data-v="eod">📝 EOD</button>' : '') +
     '<button class="item" data-a="tab" data-v="rec">🔁 Recurring kaam</button>' +
     '<button class="item" data-a="tab" data-v="score">🏆 Score</button>' +
     '<button class="item" data-a="pinchange">🔑 PIN badlo</button>' +
@@ -143,10 +144,11 @@ function rowBtn(t) {
   return '<button class="ab ok' + b + '" data-a="finish" data-id="' + esc(t.id) + '"><span>✓</span>Ho gaya</button>';
 }
 function row(t, showOwner) {
+  var by = (t.status === 'Open' && t.createdBy !== t.owner && D.users.indexOf(t.createdBy) !== -1) ? '<span class="tag" style="background:var(--gold);color:var(--b)">🆕 ' + esc(t.createdBy) + ' ne diya</span>' : '';
   var d = dueTxt(t), st = t.status !== 'Open' ? '<span class="tag t-' + esc(t.status.replace(' ', '')) + '">' + esc(t.status === 'In Progress' ? 'Chal raha' : t.status) + '</span>' : '';
   return '<div class="row ' + esc(t.priority) + (BUSY[t.id] ? ' saving' : '') + (V.flash === t.id ? ' flash' : '') + '" role="button" tabindex="0" data-a="open" data-id="' + esc(t.id) + '">' +
     avatar(t.client) + '<div class="rb"><p class="rn">' + esc(t.title) + '</p>' +
-    '<p class="rs">' + st + '<span class="d ' + d.c + '">' + esc(d.s) + '</span> · ' + esc(shortClient(t.client)) + (showOwner || t.owner !== me() ? ' · 👤 ' + esc(t.owner) : '') + '</p>' +
+    '<p class="rs">' + by + st + '<span class="d ' + d.c + '">' + esc(d.s) + '</span> · ' + esc(shortClient(t.client)) + (showOwner || t.owner !== me() ? ' · 👤 ' + esc(t.owner) : '') + '</p>' +
     (t.status === 'Waiting' && t.waiting ? '<p class="rs">⏳ ' + esc(t.waiting) + '</p>' : '') + '</div>' + rowBtn(t) + '</div>';
 }
 function section(title, cls, list, showOwner) {
@@ -171,6 +173,11 @@ function todayScreen() {
   if (DPROMPT && !ls(LS.ib)) h += '<div class="install">📲 Jinovate OS ko phone par app ki tarah rakho<button class="chip on" data-a="install">Install</button><button class="chip" data-a="ibno">Baad mein</button></div>';
   if (!D.eodDone && new Date().getHours() >= 17) h += '<div class="install" style="background:var(--yelbg);color:var(--yel)">📝 Aaj ka EOD baaki hai<button class="chip on" data-a="tab" data-v="eod">Bharo</button></div>';
   if (isAdmin()) {
+    var oth = D.users.filter(function (u) { return u !== me(); }).map(function (u) {
+      var o = D.tickets.filter(function (t) { return t.owner === u && isOpen(t); });
+      return '<b>' + esc(u) + '</b>: ' + o.length + ' open · <span style="color:var(--red)">' + o.filter(function (t) { return t.status !== 'Review' && t.due && t.due < T; }).length + ' late</span>';
+    }).join('<br>');
+    if (oth) h += '<button class="install" style="width:calc(100% - 24px);text-align:left;border:0" data-a="tab" data-v="dir"><span style="flex:1">👔 ' + oth + '</span><span class="chip on" style="flex:none">Director view</span></button>';
     var rv = D.tickets.filter(function (t) { return t.status === 'Review'; }).sort(byDue);
     h += section('Aapke review ke liye', 'bl', rv, true);
   }
@@ -393,6 +400,87 @@ function recScreen() {
   return h + '<div class="body"></div>';
 }
 
+/* ---------- DIRECTOR VIEW (admin only) ---------- */
+var DIR = null;
+function dirRange(k) {
+  var T = todayStr(), dw = new Date(T + 'T12:00:00').getDay();
+  if (k === 'kal') { var y = addDays(T, -1); return [y, y]; }
+  if (k === 'week') return [addDays(T, -((dw + 6) % 7)), T];
+  if (k === 'month') return [addDays(T, -29), T];
+  return [T, T];
+}
+function actLabel(x) {
+  if (x.action === 'CREATE') return '➕ Naya kaam' + (/ → (\S+)/.test(x.note) ? ' → ' + x.note.match(/ → (\S+)/)[1] : '');
+  if (x.action === 'COMMENT') return '💬 Comment';
+  if (x.action === 'EDIT') return '✏ Badla';
+  if (x.action === 'RULE') return '🔁 Recurring';
+  if (x.action === 'STATUS') {
+    if (x.to === 'Done') return x.from === 'Review' ? '✅ Approve kiya' : '✅ Done kiya';
+    if (x.to === 'Review') return '📤 Review bheja';
+    if (x.to === 'Waiting') return '⏳ Waiting';
+    if (x.to === 'Cancelled') return '✖ Cancel';
+    if (x.to === 'In Progress') return x.from === 'Review' || x.from === 'Done' ? '↩ Wapas bheja' : x.from === 'Waiting' ? '↺ Phir chalu' : '▶ Shuru kiya';
+  }
+  return x.action;
+}
+function directorScreen() {
+  if (!isAdmin()) { V.tab = 'aaj'; return todayScreen(); }
+  var others = D.users.filter(function (u) { return u !== me(); });
+  if (!V.dir) V.dir = { who: others[0] || me(), r: 'today' };
+  var Q = V.dir, rg = dirRange(Q.r), key = rg.join('|');
+  var chip = function (k, v, l) { return '<button class="sc' + (Q[k] === v ? ' on' : '') + '" data-a="dirf" data-k="' + k + '" data-v="' + esc(v) + '">' + l + '</button>'; };
+  var h = header('Director view', 'Sirf aapke liye · ' + (rg[0] === rg[1] ? nice(rg[0]) : nice(rg[0]) + ' – ' + nice(rg[1])));
+  h += '<div class="strip" style="border:0;background:none">' + D.users.map(function (u) { return chip('who', u, esc(u)); }).join('') + chip('who', '', 'Sab') + '</div>';
+  h += '<div class="strip" style="border:0;background:none;padding-top:0">' + chip('r', 'today', 'Aaj') + chip('r', 'kal', 'Kal') + chip('r', 'week', 'Is hafte') + chip('r', 'month', '30 din') + '</div>';
+  /* right now – from live ticket data */
+  var T = todayStr(), mine = D.tickets.filter(function (t) { return (!Q.who || t.owner === Q.who) && isOpen(t); });
+  var late = mine.filter(function (t) { return t.status !== 'Review' && t.due && t.due < T; }).sort(byDue);
+  var tod = mine.filter(function (t) { return t.status !== 'Review' && t.due === T; });
+  var wt = mine.filter(function (t) { return t.status === 'Waiting'; }), rv = mine.filter(function (t) { return t.status === 'Review'; });
+  var box = function (n, l, c, act) { return '<button class="card" style="text-align:center;padding:10px 4px' + (act ? '' : ';cursor:default') + '"' + (act || '') + '><b style="display:block;font-size:24px;color:' + (c || 'var(--ink)') + '">' + n + '</b><span style="font-size:12px;color:var(--mut)">' + l + '</span></button>'; };
+  var allAct = function (st) { return ' data-a="dirall" data-v="' + esc(Q.who) + '" data-k="' + st + '"'; };
+  h += '<h2 class="sh"><span>Abhi ' + (Q.who ? esc(Q.who) + ' ke paas' : 'sab ke paas') + '</span></h2><div class="pad" style="padding-top:0"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' +
+    box(mine.length, 'Open', '', allAct('open')) + box(late.length, 'Late', late.length ? 'var(--red)' : '', allAct('late')) + box(tod.length, 'Aaj due', tod.length ? 'var(--org)' : '') + box(wt.length, 'Waiting', '', allAct('Waiting')) + '</div></div>';
+  if (late.length) h += section('Late kaam', 'r', late.slice(0, 10), !Q.who);
+  if (rv.length && Q.who !== me()) h += section('Aapke review ke liye', 'bl', rv, true);
+  /* activity in range – from server log */
+  if (!DIR || DIR.key !== key) {
+    if (!directorScreen.loading) {
+      directorScreen.loading = true;
+      api('director', { from: rg[0], to: rg[1] }).then(function (d) { directorScreen.loading = false; DIR = { key: key, d: d }; if (V.tab === 'dir') rerender(); })
+        .catch(function (e) { directorScreen.loading = false; toast(e.message, true); });
+    }
+    return h + '<div class="pad"><p class="hint">Kaam ki history load ho rahi hai…</p></div><div class="body"></div>';
+  }
+  var L = DIR.d.log.filter(function (x) { return !Q.who || x.user === Q.who; });
+  var cnt = function (f) { return L.filter(f).length; };
+  var nDone = cnt(function (x) { return x.action === 'STATUS' && (x.to === 'Done' || x.to === 'Review'); });
+  var nStart = cnt(function (x) { return x.action === 'STATUS' && x.to === 'In Progress'; });
+  var nCom = cnt(function (x) { return x.action === 'COMMENT'; }), nNew = cnt(function (x) { return x.action === 'CREATE'; });
+  var eod = DIR.d.eod.filter(function (e) { return !Q.who || e.user === Q.who; });
+  h += '<h2 class="sh"><span>' + (Q.who ? esc(Q.who) + ' ne kya kiya' : 'Kisne kya kiya') + '</span></h2><div class="pad" style="padding-top:0"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' +
+    box(nDone, 'Pura kiya', nDone ? 'var(--grn)' : '') + box(nStart, 'Shuru kiye') + box(nCom, 'Comments') + box(nNew, 'Naye kaam') + '</div>' +
+    (Q.who && Q.r !== 'week' && Q.r !== 'month' ? '<p class="hint" style="margin-top:10px">' + (eod.length ? '📝 EOD bhara (' + esc(eod[0].at.substring(11)) + ')' : '📝 EOD nahi bhara') + '</p>' : '') + '</div>';
+  if (!L.length) h += '<div class="empty"><b>Is samay mein koi update nahi</b>' + (Q.who ? esc(Q.who) + ' ne app mein kuch update nahi kiya' : '') + '</div>';
+  else {
+    var day = '', rows = '';
+    L.forEach(function (x) {
+      var d = x.at.substring(0, 10);
+      if (d !== day) { if (rows) rows += '</div>'; day = d; rows += '<h2 class="sh"><span>' + esc(DAY[new Date(d + 'T12:00:00').getDay()] + ', ' + nice(d)) + '</span></h2><div class="list">'; }
+      var t = tk(x.id);
+      rows += '<div class="row"' + (t ? ' role="button" tabindex="0" data-a="open" data-id="' + esc(x.id) + '"' : '') + ' style="min-height:60px;align-items:flex-start">' +
+        '<span style="flex:none;width:44px;font-size:13px;font-weight:700;color:var(--mut);padding-top:2px">' + esc(x.at.substring(11, 16)) + '</span>' +
+        '<div class="rb"><p class="rs" style="margin:0;color:var(--ink);font-weight:700">' + esc(actLabel(x)) + (Q.who ? '' : ' · ' + esc(x.user)) + '</p>' +
+        '<p class="rn" style="font-size:15px;font-weight:500">' + esc(x.title || x.id) + '</p>' +
+        '<p class="rs">' + esc(shortClient(x.client)) + (x.action === 'STATUS' && x.to === 'Waiting' && x.note ? ' · ' + esc(x.note) : '') + '</p>' +
+        (x.note && x.action === 'COMMENT' || (x.note && x.action === 'STATUS' && x.to !== 'Waiting') ? '<p class="rs" style="white-space:normal">“' + esc(x.note) + '”</p>' : '') + '</div></div>';
+    });
+    h += rows + '</div>';
+  }
+  if (eod.length) h += '<h2 class="sh"><span>EOD</span></h2><div class="pad" style="padding-top:0">' + eod.map(function (x) { return '<div class="card" style="font-size:14px;margin-bottom:10px"><b>' + esc(x.user) + '</b> · ' + esc(nice(x.date)) + '<p class="det" style="margin-top:6px"><b>Kiya:</b> ' + esc(x.done) + (x.blocked ? '\n<b>Atka:</b> ' + esc(x.blocked) : '') + '\n<b>Kal:</b> ' + esc(x.plan) + '</p></div>'; }).join('') + '</div>';
+  return h + '<div class="body"></div>';
+}
+
 /* ---------- EOD ---------- */
 function eodScreen() {
   var T = todayStr(), m = me();
@@ -566,7 +654,7 @@ function edit(id, p, msg) {
     .catch(function (e) { sheetErr(e.message); });
 }
 
-function go(tab) { V.tab = tab; V.scr = null; MENU = false; SHEET = null; if (tab === 'add' && !NEW) NEW = newDraft(); if (tab === 'bill') { B = null; } if (tab === 'rec') { REC = null; } render(); window.scrollTo(0, 0); }
+function go(tab) { V.tab = tab; V.scr = null; MENU = false; SHEET = null; if (tab === 'add' && !NEW) NEW = newDraft(); if (tab === 'bill') { B = null; } if (tab === 'rec') { REC = null; } if (tab === 'dir') { DIR = null; } render(); window.scrollTo(0, 0); }
 
 document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-a]'); if (!el) return;
@@ -623,6 +711,8 @@ document.addEventListener('click', function (ev) {
     case 'ns': readNew(); NEW.src = v; rerender(); break;
     case 'nmore': readNew(); NEW.showMore = true; rerender(); break;
     case 'nsave': saveNew(); break;
+    case 'dirf': V.dir[el.dataset.k] = v; rerender(); break;
+    case 'dirall': V.all = { q: '', st: el.dataset.k, who: v }; go('all'); break;
     case 'nrec': readNew(); NEW.rec = v === '1'; NEW.err = ''; if (NEW.rec && !isAdmin()) NEW.owner = me(); rerender(); break;
     case 'nfreq': readNew(); NEW.freq = v; NEW.rday = ''; NEW.err = ''; rerender(); break;
     case 'nrday': readNew(); NEW.rday = v; rerender(); break;
